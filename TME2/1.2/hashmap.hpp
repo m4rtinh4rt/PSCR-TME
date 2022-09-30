@@ -72,5 +72,15 @@ class HashTable {
 
     for (Entry& e : vec) this->put(e.key, e.value);
   }
+
+  std::vector<std::pair<std::string, int>> export_data() const {
+    std::vector<std::pair<std::string, int>> vec;
+
+    for (auto& l : buckets) {
+      for (auto& e : l)
+        vec.push_back(std::pair<std::string, int>(e.key, e.value));
+    }
+    return vec;
+  }
 };
 }  // namespace pr
