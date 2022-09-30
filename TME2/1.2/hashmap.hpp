@@ -15,9 +15,11 @@ class HashTable {
   };
   typedef std::vector<std::forward_list<Entry>> bucket_t;
   bucket_t buckets;
+  size_t sz;
 
  public:
   HashTable(size_t init = 100) {
+    sz = 0;
     buckets.reserve(init);
     for (size_t i = 0; i < init; ++i)
       buckets.push_back(std::forward_list<Entry>());
@@ -33,12 +35,13 @@ class HashTable {
   }
 
   bool put(const K& key, const V& value) {
-    size_t size = this->size();
-    if ((size * 100 / buckets.size()) >= 80) this->grow();
+    size_t size = sz;
+    if ((((size == 0) ? 1 : size) * 100 / buckets.size()) >= 80) this->grow();
 
     size_t h = std::hash<K>()(key);
     std::forward_list<Entry>& l = buckets[h % buckets.size()];
 
+    sz++;
     for (Entry& x : l) {
       if (x.key == key) {
         x.value = value;
@@ -49,18 +52,13 @@ class HashTable {
     return false;
   }
 
-  size_t size() {
-    size_t sum = 0;
-    for (std::forward_list<Entry>& l : buckets) {
-      sum += std::distance(l.begin(), l.end());
-    }
-    return sum;
-  }
+  size_t size() { return sz; }
 
   void grow() {
     size_t len = buckets.size();
     std::vector<Entry> vec;
     vec.reserve(len);
+    sz = 0;
 
     for (std::forward_list<Entry>& l : buckets) {
       for (Entry& e : l) vec.push_back(e);
