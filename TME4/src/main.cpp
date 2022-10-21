@@ -10,16 +10,15 @@
 using namespace std;
 
 void work(pr::Banque& b) {
-  int i, j, m, s;
+  int i, j, m; //, s;
   for (size_t x = 0; x < 1000; ++x) {
     i = rand() % NB_ACCOUNT;
     j = rand() % NB_ACCOUNT;
     m = rand() % 100;
-    //s = rand() % 20 + 1;
+    // s = rand() % 20 + 1;
 
-    (void)s;
     b.transfert(i, j, m);
-//    std::this_thread::sleep_for(std::chrono::milliseconds(s));
+    // std::this_thread::sleep_for(std::chrono::milliseconds(s));
   }
 }
 
