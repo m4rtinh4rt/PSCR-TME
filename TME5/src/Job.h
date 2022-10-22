@@ -1,34 +1,35 @@
 #pragma once
 
+#include "Barrier.h"
+#include "Scene.h"
+
 namespace pr {
 
+int findClosestInter(const Scene& scene, const Rayon& ray);
+Color computeColor(const Sphere& obj, const Rayon& ray, const Vec3D& camera,
+                   std::vector<Vec3D>& lights);
+
 class Job {
-public:
-	virtual void run () = 0;
-	virtual ~Job() {};
+ public:
+  virtual void run() = 0;
+  virtual ~Job(){};
 };
 
-// Job concret : exemple
+class PixelJob : public Job {
+  int x, y;
+  const Scene::screen_t& screen;
+  Scene* scene;
+  std::vector<Vec3D> lights;
+  Color* pixels;
+  Barrier& b;
+  void calcul(int x, int y, const Scene::screen_t& screen, Scene& scene,
+              std::vector<Vec3D>& lights, Color* pixels);
 
-/**
-class SleepJob : public Job {
-	int calcul (int v) {
-		std::cout << "Computing for arg =" << v << std::endl;
-		// traiter un gros calcul
-		this_thread::sleep_for(1s);
-		int ret = v % 255;
-		std::cout << "Obtained for arg =" << arg <<  " result " << ret << std::endl;
-		return ret;
-	}
-	int arg;
-	int * ret;
-public :
-	SleepJob(int arg, int * ret) : arg(arg), ret(ret) {}
-	void run () {
-		* ret = calcul(arg);
-	}
-	~SleepJob(){}
+ public:
+  PixelJob(int x, int y, const Scene::screen_t& screen, Scene* scene,
+           std::vector<Vec3D> lights, Color* pixels, Barrier& b);
+  ~PixelJob();
+  void run();
 };
-**/
 
-}
+}  // namespace pr
