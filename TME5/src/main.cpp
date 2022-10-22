@@ -88,12 +88,8 @@ int main() {
   pool.start(8);
 
   // pour chaque pixel, calculer sa couleur
-  for (int x = 0; x < scene.getWidth(); x++) {
-    for (int y = 0; y < scene.getHeight(); y++) {
-      pool.submit(new PixelJob(x, y, screen, &scene, lights, pixels, b));
-    }
-  }
-  std::cout << "START" << std::endl;
+  for (int x = 0; x < scene.getWidth(); x++)
+    pool.submit(new PixelJob(x, screen, &scene, lights, pixels, b));
 
   b.waitFor();
   pool.stop();

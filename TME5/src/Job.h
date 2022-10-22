@@ -16,17 +16,17 @@ class Job {
 };
 
 class PixelJob : public Job {
-  int x, y;
+  int x;
   const Scene::screen_t& screen;
   Scene* scene;
   std::vector<Vec3D> lights;
   Color* pixels;
   Barrier& b;
-  void calcul(int x, int y, const Scene::screen_t& screen, Scene& scene,
+  void calcul(int x, const Scene::screen_t& screen, Scene& scene,
               std::vector<Vec3D>& lights, Color* pixels);
 
  public:
-  PixelJob(int x, int y, const Scene::screen_t& screen, Scene* scene,
+  PixelJob(int x, const Scene::screen_t& screen, Scene* scene,
            std::vector<Vec3D> lights, Color* pixels, Barrier& b);
   ~PixelJob();
   void run();
