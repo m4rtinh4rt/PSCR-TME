@@ -103,5 +103,7 @@ int main() {
 
   exportImage("toto.ppm", scene.getWidth(), scene.getHeight(), pixels);
 
+  delete[] pixels;
+
   return 0;
 }
