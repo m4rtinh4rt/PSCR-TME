@@ -1,6 +1,8 @@
 #include <iostream>
 #include <unistd.h>
+#include <sys/wait.h>
 
+// 10 processes
 int main () {
 	const int N = 3;
 	std::cout << "main pid=" << getpid() << std::endl;
@@ -14,5 +16,9 @@ int main () {
 			}
 		}
 	}
+
+  while (wait(NULL) > 0)
+    continue;
+
 	return 0;
 }
