@@ -5,6 +5,8 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
 #include <iostream>
 #include <ostream>
@@ -15,6 +17,10 @@
 namespace pr {
 
 inline std::ostream& operator<<(std::ostream& os, const struct sockaddr_in* addr) {
+  char hostnane[1024] = { 0 };
+  if (!getnameinfo((struct sockaddr *)addr, sizeof(*addr), hostnane, 1024, nullptr, 0, 0)) {
+    os << "[" << hostnane << "] ";
+  }
   return os << inet_ntoa(addr->sin_addr) << ":" << ntohs(addr->sin_port);
 }
 
@@ -26,16 +32,17 @@ class Socket {
   Socket(int fd) : fd(fd) {}
 
   void connect(const std::string& host, int port) {
-    struct hostent* h = gethostbyname(host.c_str());
-    if (!h) {
-      perror("gethostbyname");
+    struct addrinfo* addr;
+    if (getaddrinfo(host.c_str(), nullptr, nullptr, &addr) < 0) {
+      perror("getaddrinfo");
       exit(1);
     }
-    connect(*(struct in_addr *)h->h_addr, port);
+    in_addr ipv4 = ((struct sockaddr_in *)addr->ai_addr)->sin_addr;
+    freeaddrinfo(addr);
+    connect(ipv4, port);
   }
 
   void connect(in_addr ipv4, int port) {
-    //std::cout << inet_ntoa(ipv4) << " : " << port << std::endl;
     if ((fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
       perror("socket");
       exit(1);
@@ -45,6 +52,8 @@ class Socket {
     t.sin_addr = ipv4;
     t.sin_family = AF_INET;
     t.sin_port = htons(port);
+
+    std::cout << &t << std::endl;
 
     if (::connect(fd, (struct sockaddr*)&t, sizeof(t)) < 0) {
       perror("connect");
