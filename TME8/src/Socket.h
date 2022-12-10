@@ -1,24 +1,25 @@
 #ifndef SRC_SOCKET_H_
 #define SRC_SOCKET_H_
 
-#include <netinet/ip.h>
-#include <netdb.h>
 #include <arpa/inet.h>
-#include <unistd.h>
-#include <sys/types.h>
+#include <netdb.h>
+#include <netinet/ip.h>
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 
-#include <iostream>
-#include <ostream>
 #include <iosfwd>
 #include <iostream>
+#include <ostream>
 #include <string>
 
 namespace pr {
 
-inline std::ostream& operator<<(std::ostream& os, const struct sockaddr_in* addr) {
-  char hostnane[1024] = { 0 };
-  if (!getnameinfo((struct sockaddr *)addr, sizeof(*addr), hostnane, 1024, nullptr, 0, 0)) {
+inline std::ostream& operator<<(std::ostream& os,
+                                const struct sockaddr_in* addr) {
+  char hostnane[1024] = {0};
+  if (!getnameinfo((struct sockaddr*)addr, sizeof(*addr), hostnane, 1024,
+                   nullptr, 0, 0)) {
     os << "[" << hostnane << "] ";
   }
   return os << inet_ntoa(addr->sin_addr) << ":" << ntohs(addr->sin_port);
@@ -37,7 +38,7 @@ class Socket {
       perror("getaddrinfo");
       exit(1);
     }
-    in_addr ipv4 = ((struct sockaddr_in *)addr->ai_addr)->sin_addr;
+    in_addr ipv4 = ((struct sockaddr_in*)addr->ai_addr)->sin_addr;
     freeaddrinfo(addr);
     connect(ipv4, port);
   }
@@ -64,7 +65,6 @@ class Socket {
   bool isOpen() const { return fd != -1; }
   int getFD() { return fd; }
   void close() { ::close(fd); };
-
 };
 
 }  // namespace pr

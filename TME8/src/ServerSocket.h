@@ -1,9 +1,9 @@
 #ifndef SRC_SERVERSOCKET_H_
 #define SRC_SERVERSOCKET_H_
 
-#include "Socket.h"
-
 #include <sys/socket.h>
+
+#include "Socket.h"
 
 namespace pr {
 
@@ -17,7 +17,7 @@ class ServerSocket {
     int val = 1;
     struct sockaddr_in t;
     if ((socketfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-      perror("socketfd");
+      perror("socket");
       exit(1);
     }
     if (setsockopt(socketfd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(int)) < 0) {
@@ -55,9 +55,7 @@ class ServerSocket {
     return Socket(fd);
   }
 
-  void close() {
-    ::close(socketfd);
-  }
+  void close() { ::close(socketfd); }
 };
 
 }  // namespace pr
