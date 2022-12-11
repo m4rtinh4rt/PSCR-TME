@@ -41,6 +41,9 @@ namespace pr {
       addr.sin_addr.s_addr = INADDR_ANY;
       addr.sin_port = htons(port_);
 
+      int opt = 1;
+      setsockopt(s_, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(int));
+
       if (bind(s_, (const struct sockaddr *)&addr, sizeof(addr)) < 0) {
         perror("bind");
         return false;
